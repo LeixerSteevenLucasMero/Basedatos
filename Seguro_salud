@@ -390,5 +390,33 @@ afiliado.id_afiliado='afi01'
 
 
 
-/**/
+/*•	Cantidad de veces de reservaciones que cada afiliado a realizado.*/
   
+SELECT 
+  afiliado.id_afiliado, 
+  afiliado.noms_afiliado, 
+  count(registro_reserva_cita.id_reserva)as cantidad_cita
+FROM public.registro_reserva_cita
+inner join public.afiliado_reserva_cita on registro_reserva_cita.id_reserva = afiliado_reserva_cita.id_reserva
+inner join public.afiliado on afiliado.id_afiliado = afiliado_reserva_cita.id_afiliado
+inner join public.detalle_cita on detalle_cita.id_reserva = registro_reserva_cita.id_reserva
+inner join public.medico on medico.id_medico = detalle_cita.id_medico
+  group by afiliado.id_afiliado
+  order by cantidad_cita desc
+  
+  
+  
+   /*•	Cantidad de citas atendidas por cada casa de salud afiliada.*/
+  
+  SELECT 
+  casa_de_salud.nom_casa_salud, 
+  casa_de_salud.convenio_casa_salud,
+  registro_reserva_cita.estado_reserva,
+  count (registro_reserva_cita.id_reserva)as cantidad_cita
+FROM public.registro_reserva_cita
+inner join public.afiliado_reserva_cita on registro_reserva_cita.id_reserva = afiliado_reserva_cita.id_reserva
+inner join public.afiliado on afiliado.id_afiliado = afiliado_reserva_cita.id_afiliado
+inner join public.detalle_cita on detalle_cita.id_reserva = registro_reserva_cita.id_reserva
+inner join public.casa_de_salud on registro_reserva_cita.id_casa_salud = casa_de_salud.id_casa_salud 
+  where registro_reserva_cita.estado_reserva = 'true'
+  group by casa_de_salud.nom_casa_salud, casa_de_salud.convenio_casa_salud, registro_reserva_cita.estado_reserva
